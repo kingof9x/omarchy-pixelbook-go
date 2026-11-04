@@ -1,0 +1,9 @@
+{
+  "conf_replace": [
+    {
+      "iso": "/omarchy-4.0.6.iso",
+      "org": "/boot/grub/grub.cfg",
+      "new": "/ventoy/omarchy.cfg"
+    }
+  ]
+}
