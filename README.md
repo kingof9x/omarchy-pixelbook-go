@@ -214,3 +214,11 @@ Status: not working yet. See the checklist above.
 - [Ventoy Boot Conf Replace plugin](https://www.ventoy.net/en/plugin_bootconf_replace.html)
 - [Chromebook to Ultrabook forum](https://forum.chrultrabook.com)
 - [Fedora basic graphics mode test case](https://fedoraproject.org/wiki/QA:Testcase_Anaconda_User_Interface_Basic_Video_Driver), which shows that the safe option is just `nomodeset`
+
+## Project status
+
+**Status:** Active  
+**Waiting on:** Developer: test the remaining hardware (touchpad, Wi-Fi, audio and more)  
+**Notes:** Notes and fixes for running Omarchy on a Google Pixelbook Go. Boots cleanly with nomodeset for the installer and the LTS kernel with i915 fixes.  
+**Last updated:** 2026-11-09
+
