@@ -22,18 +22,18 @@ Out of the box, Omarchy (and most other distros) boots to a glitched screen on t
 | Boot splash / password screen | ⬜ | Glitches; fix applied, still to be verified (see [Splash screen](#5-fixing-the-glitched-boot-splash)) |
 | Hyprland desktop | ✅ | On the LTS kernel |
 | Keyboard | ✅ | |
-| Touchpad | ⬜ | |
-| Touchscreen | ⬜ | |
-| Wi-Fi | ⬜ | |
+| Touchpad | ✅ | |
+| Touchscreen | ✅ | |
+| Wi-Fi | ✅ | |
 | Bluetooth | ⬜ | |
-| Audio (speakers / headphones / mic) | ⬜ | Chromebooks usually need an extra audio setup script |
+| Audio (speakers / headphones / mic) | ✅ | Chromebooks usually need an extra audio setup script |
 | Webcam | ❌ | Needs a patched libcamera (see [Camera](#camera)) |
-| Screen brightness keys | ⬜ | |
-| Keyboard backlight | ⬜ | |
-| Suspend / resume | ⬜ | |
-| Hibernate | ⬜ | Omarchy sets this up (`resume=` is on the kernel command line) |
+| Screen brightness keys | ✅ | |
+| Keyboard backlight | ✅ | |
+| Suspend / resume | ✅ | |
+| Hibernate | ✅ | Omarchy sets this up (`resume=` is on the kernel command line) |
 | External display (USB-C) | ⬜ | |
-| Battery reporting / charging | ⬜ | |
+| Battery reporting / charging | ✅ | |
 
 ---
 
