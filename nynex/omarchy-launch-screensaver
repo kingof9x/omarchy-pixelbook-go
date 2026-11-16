@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# nynex hook for Omarchy's screensaver (installed to /usr/local/bin by nynex/install.sh).
+#
+# Omarchy's idle service runs `omarchy-launch-screensaver`. /usr/local/bin comes before
+# /usr/bin on the PATH, so this script runs instead of Omarchy's own launcher. It starts
+# one nynex window per monitor with Omarchy's screensaver app id, so Omarchy's window rules,
+# idle/lock handling and `pkill -f org.omarchy.screensaver` treat it like the original.
+#
+# It hands over to Omarchy's own screensaver when nynex is missing or switched off in the
+# nynex app (~/.config/nynex-screensaver/omarchy-screensaver-off).
+
+ORIGINAL=/usr/bin/omarchy-launch-screensaver
+NYNEX=$(command -v nynex)
+OFF_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/nynex-screensaver/omarchy-screensaver-off"
+
+if [[ -z $NYNEX || -f $OFF_FILE ]]; then
+  exec "$ORIGINAL" "$@"
+fi
+
+# Exit early if a screensaver is already running
+pgrep -f '[o]rg.omarchy.screensaver' >/dev/null && exit 0
+
+# Allow the screensaver to be turned off (Omarchy menu toggle) but also force started
+if command -v omarchy-toggle-enabled >/dev/null && omarchy-toggle-enabled screensaver-off && [[ $1 != "force" ]]; then
+  exit 1
+fi
+
+focused=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
+
+hypr_focus_monitor() {
+  hyprctl dispatch "hl.dsp.focus({ monitor = \"$1\" })" >/dev/null 2>&1 || hyprctl dispatch focusmonitor "$1" >/dev/null
+}
+
+hypr_exec() {
+  local command
+  printf -v command '%q ' "$@"
+  hyprctl dispatch "hl.dsp.exec_cmd([[[workspace $workspace] $command]])" >/dev/null 2>&1 ||
+    hyprctl dispatch exec -- "[workspace $workspace]" "$command" >/dev/null
+}
+
+SOCKET="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+
+# Listen to Hyprland's events before starting anything, so we can wait for each window.
+exec {events}< <(socat -U - "UNIX-CONNECT:$SOCKET")
+
+wait_for_screensaver_window() {
+  local line deadline=$((SECONDS + 5))
+  while ((SECONDS < deadline)) && IFS= read -r -t $((deadline - SECONDS)) -u "$events" line; do
+    [[ $line == openwindow\>\>*,org.omarchy.screensaver,* ]] && return 0
+  done
+}
+
+index=0
+while read -r m special; do
+  hypr_focus_monitor "$m"
+  # Share a special workspace that is already showing, like the scratchpad, so it is still open afterwards.
+  workspace=${special:-special:screensaver-$m}
+  hypr_exec "$NYNEX" --screensaver --index "$index" --app-id org.omarchy.screensaver
+  wait_for_screensaver_window
+  index=$((index + 1))
+done < <(hyprctl monitors -j | jq -r '.[] | "\(.name) \(.specialWorkspace.name)"')
+
+[[ -n $focused ]] && hypr_focus_monitor "$focused"
+
+# Emptying a special workspace focuses its monitor, so hand focus back once all are closed.
+(
+  while hyprctl clients -j | SCREENSAVER=org.omarchy.screensaver jq -e 'any(.[]; .mapped and .class == env.SCREENSAVER)' >/dev/null; do
+    IFS= read -r -u "$events" line || exit
+  done
+  [[ -n $focused ]] && hypr_focus_monitor "$focused"
+) >/dev/null 2>&1 &

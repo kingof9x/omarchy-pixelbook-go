@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=nynex
+GenericName=Screensaver and live wallpaper
+Comment=Animated pixel-art and ASCII landscapes from your photos
+Exec=/usr/local/bin/nynex
+Icon=preferences-desktop-screensaver
+Terminal=false
+Categories=Graphics;Settings;DesktopSettings;
+StartupWMClass=nynex
