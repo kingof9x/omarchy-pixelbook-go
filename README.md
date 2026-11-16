@@ -34,6 +34,7 @@ Out of the box, Omarchy (and most other distros) boots to a glitched screen on t
 | Hibernate | ✅ | Omarchy sets this up (`resume=` is on the kernel command line) |
 | External display (USB-C) | ⬜ | |
 | Battery reporting / charging | ✅ | |
+| nynex screensaver + live wallpaper | ⬜ | Installer in [`nynex/`](nynex/), see [Extras](#extras-nynex-screensaver-and-live-wallpaper) |
 
 ---
 
@@ -205,6 +206,20 @@ The camera is a Sony IMX208 on the Intel IPU3. Both have kernel drivers, but lib
 - Patch: [libcamera IMX208 sensor helper](https://patchwork.libcamera.org/patch/23141/), which still needs changes before it can be merged
 
 Status: not working yet. See the checklist above.
+
+---
+
+## Extras: nynex screensaver and live wallpaper
+
+[`nynex/`](nynex/) installs [nynex](https://github.com/kingof9x/nynex-screensaver), animated
+pixel-art / ASCII landscapes made from your own photos, as Omarchy's idle screensaver and as a live
+wallpaper:
+
+```bash
+cd nynex && ./install.sh
+```
+
+See [nynex/README.md](nynex/README.md) for how it hooks into Omarchy and how to undo it.
 
 ---
 
